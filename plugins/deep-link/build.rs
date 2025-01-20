@@ -19,7 +19,7 @@ fn intent_filter(domain: &AssociatedDomain) -> String {
             <category android:name="android.intent.category.DEFAULT" />
             <category android:name="android.intent.category.BROWSABLE" />
             <data android:scheme="{}" />
-            {},
+            {}
         </intent-filter>"#,
                 scheme,
                 domain
@@ -40,7 +40,7 @@ fn intent_filter(domain: &AssociatedDomain) -> String {
                 <data android:scheme="http" />
                 <data android:scheme="https" />
                 <data android:host="{}" />
-                {},
+                {}
             </intent-filter>"#,
                     host,
                     domain

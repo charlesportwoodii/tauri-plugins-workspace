@@ -82,23 +82,18 @@ fn main() {
 
         #[cfg(target_os = "macos")]
         {
-            match d.host {
-                Some(ref host) => {
-                    tauri_plugin::mobile::update_entitlements(|entitlements| {
-                        entitlements.insert(
-                            "com.apple.developer.associated-domains".into(),
-                            config
-                                .mobile
-                                .into_iter()
-                                .map(|d| format!("applinks:{}", host).into())
-                                .collect::<Vec<_>>()
-                                .into(),
-                        );
-                    })
-                    .expect("failed to update entitlements");
-                },
-                None => {}
-            }
+            tauri_plugin::mobile::update_entitlements(|entitlements| {
+                entitlements.insert(
+                    "com.apple.developer.associated-domains".into(),
+                    config
+                        .mobile
+                        .into_iter()
+                        .map(|d| format!("applinks:{}", d.host.unwrap()).into())
+                        .collect::<Vec<_>>()
+                        .into(),
+                );
+            })
+            .expect("failed to update entitlements");
         }
     }
 }

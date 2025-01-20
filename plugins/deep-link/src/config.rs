@@ -10,12 +10,14 @@ use tauri_utils::config::DeepLinkProtocol;
 #[derive(Deserialize, Clone)]
 pub struct AssociatedDomain {
     #[serde(deserialize_with = "deserialize_associated_host")]
-    pub host: String,
+    pub host: Option<String>,
     #[serde(default, alias = "path-prefix", rename = "pathPrefix")]
     pub path_prefix: Vec<String>,
+    #[serde(default)]
+    pub scheme: Option<String>
 }
 
-fn deserialize_associated_host<'de, D>(deserializer: D) -> Result<String, D::Error>
+fn deserialize_associated_host<'de, D>(deserializer: D) -> Result<Option<String>, D::Error>
 where
     D: Deserializer<'de>,
 {
@@ -25,7 +27,7 @@ where
             "host `{host}` cannot start with a scheme, please remove the `{scheme}://` prefix"
         )))
     } else {
-        Ok(host)
+        Ok(Some(host))
     }
 }
 

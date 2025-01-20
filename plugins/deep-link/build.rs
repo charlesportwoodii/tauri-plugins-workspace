@@ -11,24 +11,49 @@ const COMMANDS: &[&str] = &["get_current", "register", "unregister", "is_registe
 // TODO: Consider using activity-alias in case users may have multiple activities in their app.
 // TODO: Do we want to support the other path* configs too?
 fn intent_filter(domain: &AssociatedDomain) -> String {
-    format!(
-        r#"<intent-filter android:autoVerify="true">
-    <action android:name="android.intent.action.VIEW" />
-    <category android:name="android.intent.category.DEFAULT" />
-    <category android:name="android.intent.category.BROWSABLE" />
-    <data android:scheme="http" />
-    <data android:scheme="https" />
-    <data android:host="{}" />
-    {}
-</intent-filter>"#,
-        domain.host,
-        domain
-            .path_prefix
-            .iter()
-            .map(|prefix| format!(r#"<data android:pathPrefix="{prefix}" />"#))
-            .collect::<Vec<_>>()
-            .join("\n    ")
-    )
+    match domain.scheme {
+        Some(ref scheme) => {
+            format!(
+                r#"<intent-filter android:autoVerify="true" android:label="@string/filter_view_scheme>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="{}" />
+            {},
+        </intent-filter>"#,
+                scheme,
+                domain
+                    .path_prefix
+                    .iter()
+                    .map(|prefix| format!(r#"<data android:host="{prefix}" />"#))
+                    .collect::<Vec<_>>()
+                    .join("\n    ")
+            )
+        },
+        None => match domain.host {
+            Some(ref host) => {
+                format!(
+                    r#"<intent-filter android:autoVerify="true" android:label="@string/filter_view_http">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="http" />
+                <data android:scheme="https" />
+                <data android:host="{}" />
+                {},
+            </intent-filter>"#,
+                    host,
+                    domain
+                        .path_prefix
+                        .iter()
+                        .map(|prefix| format!(r#"<data android:pathPrefix="{prefix}" />"#))
+                        .collect::<Vec<_>>()
+                        .join("\n    ")
+                )
+            },
+            None => "".into(),
+        }
+    }
 }
 
 fn main() {

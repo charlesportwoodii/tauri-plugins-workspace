@@ -14,7 +14,7 @@ fn intent_filter(domain: &AssociatedDomain) -> String {
     match domain.scheme {
         Some(ref scheme) => {
             format!(
-                r#"<intent-filter android:autoVerify="true" android:label="@string/filter_view_scheme>
+                r#"<intent-filter android:label="@string/filter_view_scheme">
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.DEFAULT" />
             <category android:name="android.intent.category.BROWSABLE" />
